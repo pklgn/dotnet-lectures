@@ -1,10 +1,12 @@
-using Accomodations;
+using Accomodations.Models;
 
-namespace Accommodations;
+namespace Accomodations;
 
 public interface IBookingService
 {
-    Booking Book(int userId, string category, DateTime startDate, DateTime endDate, bool applyDiscount);
+    Booking Book(int userId, string category, DateTime startDate, DateTime endDate, bool applyDiscount,
+        Currency currency);
+
     void CancelBooking(Guid bookingId);
     Booking FindBookingById(Guid bookingId);
     IEnumerable<Booking> SearchBookings(DateTime startDate, DateTime endDate, string categoryName);

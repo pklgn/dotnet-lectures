@@ -1,6 +1,7 @@
-using Accommodations.Commands;
+using Accomodations.Commands;
+using Accomodations.Dto;
 
-namespace Accommodations;
+namespace Accomodations;
 
 public class AccommodationsProcessor
 {
@@ -41,10 +42,15 @@ public class AccommodationsProcessor
         switch (commandName)
         {
             case "book":
-                if (parts.Length != 5)
+                if (parts.Length != 6)
                 {
                     Console.WriteLine("Invalid number of arguments for booking.");
                     return;
+                }
+
+                if ( !Enum.TryParse( parts[5], true, out CurrencyDto currency ) )
+                {
+                    throw new ArgumentException( "Invalid currency name was given" );
                 }
 
                 BookingDto bookingDto = new BookingDto
@@ -52,7 +58,8 @@ public class AccommodationsProcessor
                     UserId = int.Parse(parts[1]),
                     Category = parts[2],
                     StartDate = DateTime.Parse(parts[3]),
-                    EndDate = DateTime.Parse(parts[4])
+                    EndDate = DateTime.Parse(parts[4]),
+                    Currency = currency,
                 };
 
                 BookCommand bookCommand = new BookCommand(_bookingService, bookingDto);
@@ -89,7 +96,7 @@ public class AccommodationsProcessor
                     return;
                 }
                 Guid id = Guid.Parse(parts[1]);
-                var findCommand = new FindBookingByIdCommand(_bookingService, id);
+                FindBookingByIdCommand findCommand = new FindBookingByIdCommand(_bookingService, id);
                 findCommand.Execute();
                 break;
 
@@ -102,7 +109,7 @@ public class AccommodationsProcessor
                 DateTime startDate = DateTime.Parse(parts[1]);
                 DateTime endDate = DateTime.Parse(parts[2]);
                 string categoryName = parts[3];
-                var searchCommand = new SearchBookingsCommand(_bookingService, startDate, endDate, categoryName);
+                SearchBookingsCommand searchCommand = new SearchBookingsCommand(_bookingService, startDate, endDate, categoryName);
                 searchCommand.Execute();
                 break;
 

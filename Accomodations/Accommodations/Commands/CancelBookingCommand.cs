@@ -1,6 +1,6 @@
-using Accommodations;
-using Accommodations.Commands;
-using Accomodations;
+using Accomodations.Models;
+
+namespace Accomodations.Commands;
 
 public class CancelBookingCommand : ICommand
 {

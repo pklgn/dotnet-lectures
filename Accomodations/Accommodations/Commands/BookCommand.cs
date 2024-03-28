@@ -1,6 +1,7 @@
-using Accommodations;
-using Accommodations.Commands;
-using Accomodations;
+using Accomodations.Dto;
+using Accomodations.Models;
+
+namespace Accomodations.Commands;
 
 public class BookCommand : ICommand
 {
@@ -16,7 +17,14 @@ public class BookCommand : ICommand
 
     public void Execute()
     {
-        _executedBookingDto = _bookingService.Book(_bookingDto.UserId, _bookingDto.Category, _bookingDto.StartDate, _bookingDto.EndDate, _bookingDto.ApplyDiscount );
+        Currency currency = _bookingDto.Currency switch
+        {
+            CurrencyDto.Usd => Currency.Usd,
+            CurrencyDto.Rub => Currency.Rub,
+            CurrencyDto.Cny => Currency.Cny,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        _executedBookingDto = _bookingService.Book(_bookingDto.UserId, _bookingDto.Category, _bookingDto.StartDate, _bookingDto.EndDate, _bookingDto.ApplyDiscount, currency);
         Console.WriteLine($"Booking successful: ID {_executedBookingDto.Id}");
     }
 

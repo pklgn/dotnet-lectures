@@ -1,6 +1,4 @@
-using Accommodations;
-
-namespace Accomodations;
+namespace Accomodations.Models;
 
 public class Booking
 {
@@ -9,5 +7,6 @@ public class Booking
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public Category Category { get; set; }
+    public Currency Currency { get; set; }
     public decimal Cost { get; set; }
 }

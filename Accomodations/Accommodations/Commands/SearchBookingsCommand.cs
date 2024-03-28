@@ -1,5 +1,6 @@
-using Accommodations;
-using Accommodations.Commands;
+using Accomodations.Models;
+
+namespace Accomodations.Commands;
 
 public class SearchBookingsCommand : ICommand
 {
@@ -18,11 +19,11 @@ public class SearchBookingsCommand : ICommand
 
     public void Execute()
     {
-        var bookings = _bookingService.SearchBookings(_startDate, _endDate, _categoryName);
+        IEnumerable<Booking> bookings = _bookingService.SearchBookings(_startDate, _endDate, _categoryName);
         if (bookings.Any())
         {
             Console.WriteLine($"Found {bookings.Count()} bookings for category '{_categoryName}' between {_startDate} and {_endDate}:");
-            foreach (var booking in bookings)
+            foreach (Booking booking in bookings)
             {
                 Console.WriteLine($"- Booking ID: {booking.Id}, User ID: {booking.UserId}");
             }

@@ -1,4 +1,4 @@
-namespace Accommodations;
+namespace Accomodations.Models;
 
 public class Category
 {
