@@ -18,6 +18,7 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        SortEmployees();
         Console.WriteLine("Введите пару 'Работник-Налог' или 'exit' для выхода:");
 
         while (true)
@@ -40,7 +41,7 @@ internal class Program
                 continue;
             }
 
-            string[] parts = input.Split('-');
+            string[] parts = input.Split(':');
             if (parts.Length != 2)
             {
                 Console.WriteLine("Неверный формат ввода. Попробуйте снова.");
@@ -75,6 +76,12 @@ internal class Program
     }
 
     private static void SaveEmployees()
+    {
+        SortEmployees();
+        // TODO: дополнительная логика по сохранению
+    }
+
+    private static void SortEmployees()
     {
         _employees = _employees.OrderBy(e => e.Employee).ToList();
     }
