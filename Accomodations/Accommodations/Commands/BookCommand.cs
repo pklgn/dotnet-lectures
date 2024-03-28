@@ -23,6 +23,7 @@ public class BookCommand : ICommand
     public void Undo()
     {
         _bookingService.CancelBooking(_executedBookingDto.Id);
-        Console.WriteLine($"Booking {_executedBookingDto.Id} was canceled.");
+        decimal cancellationPenalty = _bookingService.CalculateCancellationPenaltyAmount(_executedBookingDto);
+        Console.WriteLine($"Booking {_executedBookingDto.Id} was canceled. Cancellation penalty: {cancellationPenalty}");
     }
 }
