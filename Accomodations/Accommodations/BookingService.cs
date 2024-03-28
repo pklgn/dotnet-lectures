@@ -25,25 +25,28 @@ public class BookingService : IBookingService
     {
         if (endDate < startDate)
         {
-            throw new Exception("End date cannot be earlier than start date");
+            throw new ArgumentException("End date cannot be earlier than start date");
         }
 
         Category? selectedCategory = _categories.FirstOrDefault(c => c.Name == category);
         if (selectedCategory == null)
         {
-            throw new Exception("Category not found");
+            throw new ArgumentException("Category not found");
         }
 
         if (selectedCategory.AvailableRooms <= 0)
         {
-            throw new Exception("No available rooms");
+            throw new ArgumentException("No available rooms");
         }
 
         int days = (endDate - startDate).Days;
         decimal cost = selectedCategory.BaseRate * days;
 
         User? user = _users.FirstOrDefault(u => u.Id == userId);
-        if (user == null) throw new Exception("User not found");
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
 
         if (applyDiscount && user.IsEligibleForDiscount)
         {
@@ -69,8 +72,15 @@ public class BookingService : IBookingService
     public void CancelBooking(Guid bookingId)
     {
         Booking? booking = _bookings.FirstOrDefault(b => b.Id == bookingId);
-        if (booking == null) throw new Exception("Booking not found");
+        if (booking == null)
+        {
+            throw new ArgumentException($"Booking with id: '{bookingId}' does not exist");
+        }
 
+        if (booking.StartDate <= DateTime.Now)
+        {
+            throw new ArgumentException("Start date cannot be earlier than now date");
+        }
         _bookings.Remove(booking);
         Category? category = _categories.FirstOrDefault(c => c.Name == booking.Category.Name);
         category.AvailableRooms++;
@@ -100,5 +110,17 @@ public class BookingService : IBookingService
         }
 
         return query.ToList();
+    }
+
+    public decimal CalculateCancellationPenaltyAmount(Booking booking)
+    {
+        if (booking.StartDate <= DateTime.Now)
+        {
+            throw new ArgumentException("Start date cannot be earlier than now date");
+        }
+
+        int daysBeforeArrival = (DateTime.Now - booking.StartDate).Days;
+
+        return 5000.0m / daysBeforeArrival;
     }
 }
