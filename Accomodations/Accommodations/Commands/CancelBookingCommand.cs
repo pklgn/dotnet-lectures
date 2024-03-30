@@ -23,9 +23,6 @@ public class CancelBookingCommand(IBookingService bookingService, Guid bookingId
 
     public void Undo()
     {
-        if (_canceledBooking != null)
-        {
-            Console.WriteLine("Undo for cancel is not supported");
-        }
+        Console.WriteLine("Undo for cancel is not supported");
     }
 }

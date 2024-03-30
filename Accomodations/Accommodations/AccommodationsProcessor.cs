@@ -1,9 +1,10 @@
+using System.Globalization;
 using Accommodations.Commands;
 using Accommodations.Dto;
 
 namespace Accommodations;
 
-public class AccommodationsProcessor
+public static class AccommodationsProcessor
 {
     private static BookingService _bookingService = new();
     private static Dictionary<int, ICommand> _executedCommands = new();
@@ -48,10 +49,7 @@ public class AccommodationsProcessor
                     return;
                 }
 
-                if ( !Enum.TryParse( parts[5], true, out CurrencyDto currency ) )
-                {
-                    throw new ArgumentException( "Invalid currency name was given" );
-                }
+                CurrencyDto currency = (CurrencyDto) Enum.Parse(typeof(CurrencyDto), parts[5], true);
 
                 BookingDto bookingDto = new()
                 {
@@ -65,7 +63,7 @@ public class AccommodationsProcessor
                 BookCommand bookCommand = new(_bookingService, bookingDto);
                 bookCommand.Execute();
                 _executedCommands.Add(++s_commandIndex, bookCommand);
-                Console.WriteLine("Booking successful.");
+                Console.WriteLine("Booking command run is successful.");
                 break;
 
             case "cancel":
@@ -79,7 +77,7 @@ public class AccommodationsProcessor
                 CancelBookingCommand cancelCommand = new(_bookingService, bookingId);
                 cancelCommand.Execute();
                 _executedCommands.Add(++s_commandIndex, cancelCommand);
-                Console.WriteLine("Cancellation successful.");
+                Console.WriteLine("Cancellation command run is successful.");
                 break;
 
             case "undo":

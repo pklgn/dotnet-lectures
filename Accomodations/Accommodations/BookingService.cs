@@ -90,7 +90,7 @@ public class BookingService : IBookingService
         return 0.1m;
     }
 
-    public Booking FindBookingById(Guid bookingId)
+    public Booking? FindBookingById(Guid bookingId)
     {
         return _bookings.FirstOrDefault(b => b.Id == bookingId);
     }
@@ -101,7 +101,7 @@ public class BookingService : IBookingService
 
         query = query.Where(b => b.StartDate >= startDate);
 
-        query = query.Where(b => b.EndDate <= endDate);
+        query = query.Where(b => b.EndDate < endDate);
 
         if (!string.IsNullOrEmpty(categoryName))
         {

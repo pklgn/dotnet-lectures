@@ -7,14 +7,9 @@ public class FindBookingByIdCommand(IBookingService bookingService, Guid booking
     public void Execute()
     {
         Booking? booking = bookingService.FindBookingById(bookingId);
-        if (booking != null)
-        {
-            Console.WriteLine($"Booking found: {booking.RoomCategory} for User {booking.UserId}");
-        }
-        else
-        {
-            Console.WriteLine("Booking not found.");
-        }
+        Console.WriteLine(booking != null
+            ? $"Booking found: {booking.RoomCategory} for User {booking.UserId}"
+            : "Booking not found.");
     }
 
     public void Undo()

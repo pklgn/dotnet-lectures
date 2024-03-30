@@ -18,7 +18,7 @@ public class BookCommand(IBookingService bookingService, BookingDto bookingDto) 
         };
         _executedBookingDto = bookingService.Book(bookingDto.UserId, bookingDto.Category, bookingDto.StartDate,
             bookingDto.EndDate, currency);
-        Console.WriteLine($"Booking successful: ID {_executedBookingDto.Id}");
+        Console.WriteLine($"Booking successful: ID {_executedBookingDto!.Id}");
     }
 
     public void Undo()
