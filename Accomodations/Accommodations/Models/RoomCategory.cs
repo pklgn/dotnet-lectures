@@ -1,6 +1,6 @@
-namespace Accomodations.Models;
+namespace Accommodations.Models;
 
-public class Category
+public class RoomCategory
 {
     public string Name { get; set; }
     public decimal BaseRate { get; set; }

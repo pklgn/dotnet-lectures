@@ -1,35 +1,34 @@
-using Accomodations.Models;
+using Accommodations.Models;
 
-namespace Accomodations;
+namespace Accommodations;
 
 public class BookingService : IBookingService
 {
     private List<Booking> _bookings = [];
 
-    private List<Category> _categories =
+    private readonly IReadOnlyList<RoomCategory> _categories =
     [
-        new Category { Name = "Standard", BaseRate = 100, AvailableRooms = 10 },
-        new Category { Name = "Deluxe", BaseRate = 200, AvailableRooms = 5 }
+        new RoomCategory { Name = "Standard", BaseRate = 100, AvailableRooms = 10 },
+        new RoomCategory { Name = "Deluxe", BaseRate = 200, AvailableRooms = 5 }
     ];
 
-    private List<User> _users =
+    private readonly IReadOnlyList<User> _users =
     [
-        new User { Id = 1, Name = "Alice Johnson", IsEligibleForDiscount = true },
-        new User { Id = 2, Name = "Bob Smith", IsEligibleForDiscount = false },
-        new User { Id = 3, Name = "Charlie Brown", IsEligibleForDiscount = true },
-        new User { Id = 4, Name = "Diana Prince", IsEligibleForDiscount = false },
-        new User { Id = 5, Name = "Evan Wright", IsEligibleForDiscount = true }
+        new User { Id = 1, Name = "Alice Johnson" },
+        new User { Id = 2, Name = "Bob Smith" },
+        new User { Id = 3, Name = "Charlie Brown" },
+        new User { Id = 4, Name = "Diana Prince" },
+        new User { Id = 5, Name = "Evan Wright" }
     ];
 
-    public Booking Book(int userId, string category, DateTime startDate, DateTime endDate, bool applyDiscount,
-        Currency currency)
+    public Booking Book(int userId, string categoryName, DateTime startDate, DateTime endDate, Currency currency)
     {
         if (endDate < startDate)
         {
             throw new ArgumentException("End date cannot be earlier than start date");
         }
 
-        Category? selectedCategory = _categories.FirstOrDefault(c => c.Name == category);
+        RoomCategory? selectedCategory = _categories.FirstOrDefault(c => c.Name == categoryName);
         if (selectedCategory == null)
         {
             throw new ArgumentException("Category not found");
@@ -50,13 +49,13 @@ public class BookingService : IBookingService
         decimal currencyRate = GetCurrencyRate(currency);
         decimal totalCost = CalculateBookingCost(selectedCategory.BaseRate, days, userId, currencyRate);
 
-        Booking booking = new()
+        Booking? booking = new()
         {
             Id = Guid.NewGuid(),
             UserId = userId,
             StartDate = startDate,
             EndDate = endDate,
-            Category = selectedCategory,
+            RoomCategory = selectedCategory,
             Cost = totalCost,
             Currency = currency
         };
@@ -80,18 +79,13 @@ public class BookingService : IBookingService
             throw new ArgumentException("Start date cannot be earlier than now date");
         }
 
-        Console.WriteLine($"Возврат средств на сумму {CalculateBookingCost(
-            booking.Category.BaseRate,
-            (booking.EndDate - booking.StartDate).Days,
-            booking.UserId,
-            GetCurrencyRate(booking.Currency))
-        }");
+        Console.WriteLine($"Refund of {booking.Cost} {booking.Currency}");
         _bookings.Remove(booking);
-        Category? category = _categories.FirstOrDefault(c => c.Name == booking.Category.Name);
+        RoomCategory? category = _categories.FirstOrDefault(c => c.Name == booking.RoomCategory.Name);
         category.AvailableRooms++;
     }
 
-    private decimal CalculateDiscount(int userId)
+    private static decimal CalculateDiscount(int userId)
     {
         return 0.1m;
     }
@@ -111,7 +105,7 @@ public class BookingService : IBookingService
 
         if (!string.IsNullOrEmpty(categoryName))
         {
-            query = query.Where(b => b.Category.Name == categoryName);
+            query = query.Where(b => b.RoomCategory.Name == categoryName);
         }
 
         return query.ToList();
@@ -129,7 +123,7 @@ public class BookingService : IBookingService
         return 5000.0m / daysBeforeArrival;
     }
 
-    private decimal GetCurrencyRate(Currency currency)
+    private static decimal GetCurrencyRate(Currency currency)
     {
         decimal currencyRate = 1m;
         currencyRate *= currency switch
@@ -143,7 +137,7 @@ public class BookingService : IBookingService
         return currencyRate;
     }
 
-    private decimal CalculateBookingCost(decimal baseRate, int days, int userId, decimal currencyRate)
+    private static decimal CalculateBookingCost(decimal baseRate, int days, int userId, decimal currencyRate)
     {
         decimal cost = baseRate * days;
         decimal totalCost = cost - cost * CalculateDiscount(userId) * currencyRate;

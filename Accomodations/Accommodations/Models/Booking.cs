@@ -1,12 +1,12 @@
-namespace Accomodations.Models;
+namespace Accommodations.Models;
 
 public class Booking
 {
-    public Guid Id { get; set; }
-    public int UserId { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public Category Category { get; set; }
-    public Currency Currency { get; set; }
-    public decimal Cost { get; set; }
+    public Guid Id { get; init; }
+    public int UserId { get; init; }
+    public DateTime StartDate { get; init; }
+    public DateTime EndDate { get; init; }
+    public RoomCategory RoomCategory { get; init; }
+    public Currency Currency { get; init; }
+    public decimal Cost { get; init; }
 }

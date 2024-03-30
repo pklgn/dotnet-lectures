@@ -1,29 +1,21 @@
-using Accomodations.Models;
+using Accommodations.Models;
 
-namespace Accomodations.Commands;
+namespace Accommodations.Commands;
 
-public class SearchBookingsCommand : ICommand
+public class SearchBookingsCommand(
+    IBookingService bookingService,
+    DateTime startDate,
+    DateTime endDate,
+    string categoryName)
+    : ICommand
 {
-    private readonly BookingService _bookingService;
-    private readonly DateTime _startDate;
-    private readonly DateTime _endDate;
-    private readonly string _categoryName;
-
-    public SearchBookingsCommand(BookingService bookingService, DateTime startDate, DateTime endDate, string categoryName)
-    {
-        _bookingService = bookingService;
-        _startDate = startDate;
-        _endDate = endDate;
-        _categoryName = categoryName;
-    }
-
     public void Execute()
     {
-        IEnumerable<Booking> bookings = _bookingService.SearchBookings(_startDate, _endDate, _categoryName);
+        IEnumerable<Booking?> bookings = bookingService.SearchBookings(startDate, endDate, categoryName);
         if (bookings.Any())
         {
-            Console.WriteLine($"Found {bookings.Count()} bookings for category '{_categoryName}' between {_startDate} and {_endDate}:");
-            foreach (Booking booking in bookings)
+            Console.WriteLine($"Found {bookings.Count()} bookings for category '{categoryName}' between {startDate} and {endDate}:");
+            foreach (Booking? booking in bookings)
             {
                 Console.WriteLine($"- Booking ID: {booking.Id}, User ID: {booking.UserId}");
             }
