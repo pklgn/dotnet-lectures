@@ -1,11 +1,10 @@
-namespace Accomodations.Dto;
+namespace Accommodations.Dto;
 
 public class BookingDto
 {
-    public int UserId { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Category { get; set; }
-    public bool ApplyDiscount { get; set; }
-    public CurrencyDto Currency { get; set; }
+    public int UserId { get; init; }
+    public DateTime StartDate { get; init; }
+    public DateTime EndDate { get; init; }
+    public string Category { get; init; }
+    public CurrencyDto Currency { get; init; }
 }

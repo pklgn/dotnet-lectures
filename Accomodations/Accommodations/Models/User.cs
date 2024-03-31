@@ -1,8 +1,7 @@
-namespace Accomodations.Models;
+namespace Accommodations.Models;
 
 public class User
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public bool IsEligibleForDiscount { get; set; }
+    public int Id { get; init; }
+    public string Name { get; init; }
 }

@@ -1,39 +1,28 @@
-using Accomodations.Models;
+using Accommodations.Models;
 
-namespace Accomodations.Commands;
+namespace Accommodations.Commands;
 
-public class CancelBookingCommand : ICommand
+public class CancelBookingCommand(IBookingService bookingService, Guid bookingId) : ICommand
 {
-    private readonly BookingService _bookingService;
-    private readonly Guid _bookingId;
     private Booking? _canceledBooking;
-
-    public CancelBookingCommand(BookingService bookingService, Guid bookingId)
-    {
-        _bookingService = bookingService;
-        _bookingId = bookingId;
-    }
 
     public void Execute()
     {
-        _canceledBooking = _bookingService.FindBookingById(_bookingId);
+        _canceledBooking = bookingService.FindBookingById(bookingId);
         if (_canceledBooking != null)
         {
-            _bookingService.CancelBooking(_bookingId);
-            decimal cancellationPenalty = _bookingService.CalculateCancellationPenaltyAmount(_canceledBooking);
+            bookingService.CancelBooking(bookingId);
+            decimal cancellationPenalty = bookingService.CalculateCancellationPenaltyAmount(_canceledBooking);
             Console.WriteLine($"Booking {_canceledBooking.Id} was canceled. Cancellation penalty: {cancellationPenalty}");
         }
         else
         {
-            Console.WriteLine($"Booking {_bookingId} not found.");
+            Console.WriteLine($"Booking {bookingId} not found.");
         }
     }
 
     public void Undo()
     {
-        if (_canceledBooking != null)
-        {
-            Console.WriteLine("Undo for cancel is not supported");
-        }
+        Console.WriteLine("Undo for cancel is not supported");
     }
 }

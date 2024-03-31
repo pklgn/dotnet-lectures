@@ -1,19 +1,20 @@
-using Accomodations.Commands;
-using Accomodations.Dto;
+using System.Globalization;
+using Accommodations.Commands;
+using Accommodations.Dto;
 
-namespace Accomodations;
+namespace Accommodations;
 
-public class AccommodationsProcessor
+public static class AccommodationsProcessor
 {
     private static BookingService _bookingService = new();
     private static Dictionary<int, ICommand> _executedCommands = new();
     private static int s_commandIndex = 0;
 
-    public static void Run(string[] args)
+    public static void Run()
     {
         Console.WriteLine("Booking Command Line Interface");
         Console.WriteLine("Commands:");
-        Console.WriteLine("'book <UserId> <Category> <StartDate> <EndDate>' - to book a room");
+        Console.WriteLine("'book <UserId> <Category> <StartDate> <EndDate> <Currency>' - to book a room");
         Console.WriteLine("'cancel <BookingId>' - to cancel a booking");
         Console.WriteLine("'undo' - to undo the last command");
         Console.WriteLine("'find <BookingId>' - to find a booking by ID");
@@ -48,12 +49,9 @@ public class AccommodationsProcessor
                     return;
                 }
 
-                if ( !Enum.TryParse( parts[5], true, out CurrencyDto currency ) )
-                {
-                    throw new ArgumentException( "Invalid currency name was given" );
-                }
+                CurrencyDto currency = (CurrencyDto) Enum.Parse(typeof(CurrencyDto), parts[5], true);
 
-                BookingDto bookingDto = new BookingDto
+                BookingDto bookingDto = new()
                 {
                     UserId = int.Parse(parts[1]),
                     Category = parts[2],
@@ -62,10 +60,10 @@ public class AccommodationsProcessor
                     Currency = currency,
                 };
 
-                BookCommand bookCommand = new BookCommand(_bookingService, bookingDto);
+                BookCommand bookCommand = new(_bookingService, bookingDto);
                 bookCommand.Execute();
                 _executedCommands.Add(++s_commandIndex, bookCommand);
-                Console.WriteLine("Booking successful.");
+                Console.WriteLine("Booking command run is successful.");
                 break;
 
             case "cancel":
@@ -76,10 +74,10 @@ public class AccommodationsProcessor
                 }
 
                 Guid bookingId = Guid.Parse(parts[1]);
-                CancelBookingCommand cancelCommand = new CancelBookingCommand(_bookingService, bookingId);
+                CancelBookingCommand cancelCommand = new(_bookingService, bookingId);
                 cancelCommand.Execute();
                 _executedCommands.Add(++s_commandIndex, cancelCommand);
-                Console.WriteLine("Cancellation successful.");
+                Console.WriteLine("Cancellation command run is successful.");
                 break;
 
             case "undo":
@@ -96,7 +94,7 @@ public class AccommodationsProcessor
                     return;
                 }
                 Guid id = Guid.Parse(parts[1]);
-                FindBookingByIdCommand findCommand = new FindBookingByIdCommand(_bookingService, id);
+                FindBookingByIdCommand findCommand = new(_bookingService, id);
                 findCommand.Execute();
                 break;
 
@@ -109,7 +107,7 @@ public class AccommodationsProcessor
                 DateTime startDate = DateTime.Parse(parts[1]);
                 DateTime endDate = DateTime.Parse(parts[2]);
                 string categoryName = parts[3];
-                SearchBookingsCommand searchCommand = new SearchBookingsCommand(_bookingService, startDate, endDate, categoryName);
+                SearchBookingsCommand searchCommand = new(_bookingService, startDate, endDate, categoryName);
                 searchCommand.Execute();
                 break;
 

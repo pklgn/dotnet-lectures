@@ -1,29 +1,15 @@
-using Accomodations.Models;
+using Accommodations.Models;
 
-namespace Accomodations.Commands;
+namespace Accommodations.Commands;
 
-public class FindBookingByIdCommand : ICommand
+public class FindBookingByIdCommand(IBookingService bookingService, Guid bookingId) : ICommand
 {
-    private readonly BookingService _bookingService;
-    private readonly Guid _bookingId;
-
-    public FindBookingByIdCommand(BookingService bookingService, Guid bookingId)
-    {
-        _bookingService = bookingService;
-        _bookingId = bookingId;
-    }
-
     public void Execute()
     {
-        Booking? booking = _bookingService.FindBookingById(_bookingId);
-        if (booking != null)
-        {
-            Console.WriteLine($"Booking found: {booking.Category} for User {booking.UserId}");
-        }
-        else
-        {
-            Console.WriteLine("Booking not found.");
-        }
+        Booking? booking = bookingService.FindBookingById(bookingId);
+        Console.WriteLine(booking != null
+            ? $"Booking found: {booking.RoomCategory} for User {booking.UserId}"
+            : "Booking not found.");
     }
 
     public void Undo()
